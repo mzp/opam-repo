@@ -1,8 +1,18 @@
+diff --git a/Makefile.config b/Makefile.config
+index f911235..158e5c4 100644
+--- a/Makefile.config
++++ b/Makefile.config
+@@ -1,4 +1,4 @@
+-OCAML_STDLIB=/usr/local/ocaml-3.12/lib/ocaml
++OCAML_STDLIB=/usr/local/lib/ocaml
+ DBM_INCLUDES=
+ DBM_LINK=-lgdbm_compat -lgdbm
+ DBM_DEFINES=-DDBM_USES_GDBM_NDBM
 diff --git a/configure b/configure
-index 7786275..8f3b461 100755
+index 7786275..3be6607 100755
 --- a/configure
 +++ b/configure
-@@ -42,7 +42,7 @@ dbm_include="not found"
+@@ -42,19 +42,19 @@ dbm_include="not found"
  dbm_link="not found"
  dbm_defines=""
  
@@ -11,3 +21,28 @@ index 7786275..8f3b461 100755
    if test -f $dir/ndbm.h; then
      dbm_include=$dir
      if hasgot $dir ndbm.h; then
+       dbm_link=""
+     elif hasgot $dir ndbm.h -lndbm; then
+-      dbm_link="-lndbm"
++      dbm_link="-L$(dirname $dir)/lib -lndbm"
+     elif hasgot $dir ndbm.h -ldb1; then
+-      dbm_link="-ldb1"
++      dbm_link="-L$(dirname $dir)/lib -ldb1"
+     elif hasgot $dir ndbm.h -lgdbm; then
+-      dbm_link="-lgdbm"
++      dbm_link="-L$(dirname $dir)/lib -lgdbm"
+     elif hasgot $dir ndbm.h -lgdbm_compat -lgdbm; then
+-      dbm_link="-lgdbm_compat -lgdbm"
++      dbm_link="-L$(dirname $dir)/lib -lgdbm_compat -lgdbm"
+     fi
+     break
+   fi
+@@ -62,7 +62,7 @@ for dir in /usr/include /usr/include/db1 /usr/include/gdbm; do
+     dbm_include=$dir
+     dbm_defines="-DDBM_USES_GDBM_NDBM"
+     if hasgot $dir gdbm-ndbm.h -lgdbm_compat -lgdbm; then
+-      dbm_link="-lgdbm_compat -lgdbm"
++      dbm_link="-L$(dirname $dir)/lib -lgdbm_compat -lgdbm"
+     fi
+     break
+   fi
