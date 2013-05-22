@@ -9,9 +9,18 @@ index f911235..158e5c4 100644
  DBM_LINK=-lgdbm_compat -lgdbm
  DBM_DEFINES=-DDBM_USES_GDBM_NDBM
 diff --git a/configure b/configure
-index 7786275..3be6607 100755
+index 7786275..b8bfc26 100755
 --- a/configure
 +++ b/configure
+@@ -32,7 +32,7 @@ hasgot() {
+    echo '  (void) dbm_open("foo", 0, 0);'
+    echo '  return 0;'
+    echo '}') > hasgot.c
+-  ${CC:-cc} -I$1 -o hasgot.exe hasgot.c $3 $4
++  ${CC:-cc} -L$(dirname $dir)/lib -I$1 -o hasgot.exe hasgot.c $3 $4
+   res=$?
+   rm -f hasgot.c hasgot.exe
+   return $res
 @@ -42,19 +42,19 @@ dbm_include="not found"
  dbm_link="not found"
  dbm_defines=""
