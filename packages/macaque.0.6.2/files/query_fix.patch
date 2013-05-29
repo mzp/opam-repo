@@ -1,0 +1,24 @@
+diff --git a/src/query.ml b/src/query.ml
+index cef4342..339034c 100644
+--- a/src/query.ml
++++ b/src/query.ml
+@@ -44,12 +44,18 @@ struct
+   module Db = Db
+   let (>>=) = Thread.(>>=)
+ 
++  let count =
++    let n = ref 0 in
++    fun () ->
++      incr n;
++      !n
++
+   let query dbh ?log sql_query =
+     let query = Sql.sql_of_query sql_query in
+     (match log with
+        | None -> ()
+        | Some out -> Printf.fprintf out "%s\n%!" query);
+-    let name = "query_result" in
++    let name = Printf.sprintf "query_result%d" (count ()) in
+     let close_on_error query =
+       Thread.catch query (fun exn ->
+       Db.close_statement dbh ~name () >>= fun () ->
