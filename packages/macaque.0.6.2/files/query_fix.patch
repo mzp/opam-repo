@@ -1,8 +1,8 @@
 diff --git a/src/query.ml b/src/query.ml
-index cef4342..339034c 100644
+index cef4342..97eb8ce 100644
 --- a/src/query.ml
 +++ b/src/query.ml
-@@ -44,12 +44,18 @@ struct
+@@ -44,19 +44,30 @@ struct
    module Db = Db
    let (>>=) = Thread.(>>=)
  
@@ -21,4 +21,16 @@ index cef4342..339034c 100644
 +    let name = Printf.sprintf "query_result%d" (count ()) in
      let close_on_error query =
        Thread.catch query (fun exn ->
++        print_endline "some exception";
        Db.close_statement dbh ~name () >>= fun () ->
+       Thread.fail exn) in
++    Printf.printf "query name: %s\n" name;
+     Db.prepare dbh ~query ~name () >>= fun () ->
++      print_endline "prepared";
+     close_on_error (Db.execute dbh ~name ~params:[]) >>= fun result ->
++      print_endline "executed";
+     Db.close_statement dbh ~name () >>= fun () ->
++      print_endline "closed";
+       let result =
+         let nullable = function
+           | None -> "NULL"
